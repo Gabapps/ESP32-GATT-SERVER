@@ -46,7 +46,7 @@
 // Bluetooth Core Spec v5.0, Vol3.C.11
 static uint8_t adv_rsp_data_raw[] = {
     2, //Length
-    BTM_BLE_AD_TYPE_FLAG, // AD Type : Flag
+    BTM_BLE_AD_TYPE_FLAG, // AD Type : Flags
     (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT), //Data
     7, //Length
     BTM_BLE_AD_TYPE_NAME_CMPL,
@@ -56,13 +56,11 @@ static uint8_t adv_rsp_data_raw[] = {
     0x44, 0x00 // UUID 16 bits
 };
 
-static esp_ble_adv_params_t heart_rate_adv_params = {
+static esp_ble_adv_params_t adv_params = {
     .adv_int_min        = 0x20,
     .adv_int_max        = 0x40,
     .adv_type           = ADV_TYPE_IND,
     .own_addr_type      = BLE_ADDR_TYPE_PUBLIC,
-    //.peer_addr            =
-    //.peer_addr_type       =
     .channel_map        = ADV_CHNL_ALL,
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
@@ -202,8 +200,7 @@ static const esp_gatts_attr_db_t custom_att_table[ATT_TABLE_LEN] =
               sizeof(counter_desc),
               // Current lenght of the element value
               sizeof(counter_desc),
-              // Ptr to the element value (CCC properties)
-              // (NOTIFY, INDICATE)
+              // Ptr to the element value (User-friendly name for characteristic)
               (uint8_t *)counter_desc
             }}
 };
@@ -214,7 +211,7 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
 
     switch (event) {
     case ESP_GAP_BLE_ADV_DATA_RAW_SET_COMPLETE_EVT:
-        esp_ble_gap_start_advertising(&heart_rate_adv_params);
+        esp_ble_gap_start_advertising(&adv_params);
         break;
     case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
         //advertising start complete event to indicate advertising start successfully or failed
@@ -278,7 +275,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event,
     	case ESP_GATTS_DISCONNECT_EVT:
 			ESP_LOGI(GATTS_TABLE_TAG, "Disconnection Done\n");
 
-            esp_ble_gap_start_advertising(&heart_rate_adv_params);
+            esp_ble_gap_start_advertising(&adv_params);
 		break;
     	case ESP_GATTS_OPEN_EVT:
 		break;
