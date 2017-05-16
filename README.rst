@@ -7,6 +7,6 @@ It notifies a counter value that increments each second.
 Options choose step:
     1. make menuconfig.
     2. enter menuconfig "Component config".
-    4. choose your options.
+    3. choose your options.
 
 
